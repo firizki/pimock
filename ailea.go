@@ -39,7 +39,7 @@ func getBody(in []string) string {
 }
 
 func MockServer(w http.ResponseWriter, r *http.Request) {
-  dat, err := ioutil.ReadFile("responses/"+r.Method+"/"+r.URL.Path[1:]+"/body")
+  dat, err := ioutil.ReadFile("responses/"+r.Method+"/"+r.URL.Path[1:]+"/response")
 
   if err != nil {
     w.WriteHeader(404)
