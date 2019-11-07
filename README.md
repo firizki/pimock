@@ -62,8 +62,10 @@ Simple Mock API using Golang
   {
     "path": "{{request.path.[0]}}"
   }
-    ```
+  ```
+  
   Will give response
+
   ```
   {
     "path": "users"
