@@ -5,9 +5,34 @@ import (
     "io/ioutil"
     "strings"
     "strconv"
+    "os"
+    "regexp"
+    "path/filepath"
 )
 
+var mappings []string
+
+func discoverPath(in, ext string) ([]string, error) {
+  var paths []string
+  err := filepath.Walk(in, func(path string, info os.FileInfo, err error) error {
+      result, err := regexp.MatchString(ext+"$", path)
+      if err != nil {
+        return err
+      }
+      if result {
+        paths = append(paths, path)
+      }
+      return nil
+  })
+  if err != nil {
+      return paths, err
+  }
+  return paths, nil
+}
+
 func main() {
+    mappings, _ = discoverPath("responses", "response")
+
     http.HandleFunc("/", MockServer)
     http.ListenAndServe(":8080", nil)
 }
@@ -32,20 +57,41 @@ func getHeaderData(in []string) map[string]string {
 func getBody(in []string) string {
   for i := 0; i < len(in); i++ {
     if in[i] == "" {
-      return strings.Join(in[i:], "")
+      return strings.Join(in[i+1:], "\n")
+    }
+  }
+  return ""
+}
+
+func getResponse(method, path string) string {
+  if string(path[len(path)-1]) == "/" {
+    path = path[:len(path)-1]
+  }
+  targetPath := "responses/"+method+"/"+path+"/response"
+  for _, v := range mappings {
+    result, err := regexp.MatchString(v, targetPath)
+    if err != nil {
+      panic(err)
+    }
+    if result {
+      dat, err := ioutil.ReadFile(v)
+      if err != nil {
+        panic(err)
+      }
+      return string(dat)
     }
   }
   return ""
 }
 
 func MockServer(w http.ResponseWriter, r *http.Request) {
-  dat, err := ioutil.ReadFile("responses/"+r.Method+"/"+r.URL.Path[1:]+"/response")
+  res := getResponse(r.Method, r.URL.Path[1:])
 
-  if err != nil {
+  if res == "" {
     w.WriteHeader(404)
     w.Write([]byte("Not Found"))
   } else {
-    metaData := strings.Split(string(dat), "\n")
+    metaData := strings.Split(res, "\n")
     headerStatus, _ := getHeaderStatus(metaData)
     headerData := getHeaderData(metaData)
     body := getBody(metaData)
