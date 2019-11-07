@@ -9,8 +9,7 @@ Simple Mock API using Golang
 ## How To Use
 1. Create your `response` file under directory that same with request path  
     For example you want to create mock for GET `/healthz`  
-    Create file `response` under `responses/GET/healthz/`
-    folder `responses` is mandatory
+    Create file `response` under `responses/GET/healthz/`. Folder `responses` is mandatory
 2. Write you header and body response HTTP inside your `response` file. The format is following [W3 HTTP/1.1 Response](https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html).  
     For example to send simple 200 OK you can do this
     ```
