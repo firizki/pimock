@@ -51,7 +51,7 @@ Simple Mock API using Golang
 
 <details>
   <summary>Template Feature</summary>
-  
+
   Currently it only support to get path request under variable `{{request.path.[i]}}`
   Example :
   Response file like this
@@ -60,15 +60,16 @@ Simple Mock API using Golang
   Content-Type: application/json
 
   {
-    "path": "{{request.path.[0]}}"
+    "path": "{{request.path.[1]}}"
   }
   ```
 
   Will give response
 
   ```
+  curl localhost:8080/users/123
   {
-    "path": "users"
+    "path": "123"
   }
   ```
 </details>
