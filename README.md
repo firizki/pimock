@@ -51,7 +51,7 @@ Simple Mock API using Golang
 
 <details>
   <summary>Template Feature</summary>
-
+  
   Currently it only support to get path request under variable `{{request.path.[i]}}`
   Example :
   Response file like this
