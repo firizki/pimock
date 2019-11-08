@@ -2,5 +2,6 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
-  "name": "John Doe"
+  "name": "John Doe",
+  "path": "{{request.path.[0]}}"
 }
