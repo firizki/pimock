@@ -1,14 +1,7 @@
-FROM golang:1.13.4-alpine3.10 AS builder
+FROM alpine:3.10.3
 
-RUN apk update && apk add --no-cache git
-RUN go get github.com/firizki/ailea
-
-WORKDIR $GOPATH/src/github.com/firizki/ailea/
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /go/bin/ailea
-
-FROM alpine:3.10
-
-COPY --from=builder /go/bin/ailea /usr/bin/ailea
+RUN wget https://github.com/firizki/ailea/releases/download/v0.0.1/linux-amd64.zip
+RUN unzip linux-amd64.zip -d /usr/local/bin/
 ADD responses/ responses/
 
 EXPOSE 8080
