@@ -1,6 +1,6 @@
 
 
-# Ailea
+# Pimock
 Simple Mock API using Golang
 
 ## Requirement
@@ -22,9 +22,9 @@ Simple Mock API using Golang
     ```
     go build
     ```
-4. Run ailea
+4. Run pimock
     ```
-    ./ailea
+    ./pimock
     ```
 5. Access from port `8080`
     ```
