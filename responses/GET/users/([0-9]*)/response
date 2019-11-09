@@ -3,5 +3,5 @@ Content-Type: application/json
 
 {
   "name": "John Doe",
-  "path": "{{request.path.[0]}}"
+  "path": "{{request.path.[1]}}"
 }
