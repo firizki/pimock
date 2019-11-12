@@ -7,19 +7,22 @@ import (
 )
 
 type Response struct {
-  method  string
-  path    string
-  paths   map[string]string
-  resp    []string
+  method    string
+  path      string
+  variables map[string]string
+  resp      []string
 }
 
-func NewResponse(method, path string) *Response {
+func NewResponse(method, path string, urlq map[string][]string) *Response {
   if string(path[len(path)-1]) == "/" {
     path = path[:len(path)-1]
   }
   tempPaths := map[string]string{}
   for i, v := range strings.Split(path, "/") {
     tempPaths["{{request.path.["+strconv.Itoa(i)+"]}}"] = v
+  }
+  for i, v := range urlq {
+    tempPaths["{{request.url."+i+"}}"] = v[0]
   }
 
   targetPath := "responses/"+method+"/"+path+"/response"
@@ -29,7 +32,7 @@ func NewResponse(method, path string) *Response {
       panic(err)
     }
     if result {
-      return &Response{method: method, path: path, paths: tempPaths, resp: v}
+      return &Response{method: method, path: path, variables: tempPaths, resp: v}
     }
   }
   return nil
@@ -63,7 +66,7 @@ func (r Response) getBody() string {
       re := regexp.MustCompile(`({{)([^}]*)(}})`)
       rgx := re.FindAllString(result, -1)
       for _,v := range rgx {
-        result = strings.ReplaceAll(result, v, r.paths[v])
+        result = strings.ReplaceAll(result, v, r.variables[v])
       }
       return result
     }
