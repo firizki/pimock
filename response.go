@@ -4,6 +4,7 @@ import (
   "regexp"
   "strings"
   "strconv"
+  "time"
 )
 
 type Response struct {
@@ -13,7 +14,15 @@ type Response struct {
   resp      []string
 }
 
-func NewResponse(method, path string, urlq, mapdsc map[string][]string) *Response {
+func NewResponse(method, path string, header, urlq, mapdsc map[string][]string) *Response {
+  if len(header["Pimock-Sleep"]) > 0 {
+    pimock_sleep, err := strconv.Atoi(header["Pimock-Sleep"][0])
+    if err != nil {
+      panic(err)
+    }
+    time.Sleep(time.Duration(pimock_sleep) * time.Millisecond)
+  }
+
   if string(path[len(path)-1]) == "/" {
     path = path[:len(path)-1]
   }

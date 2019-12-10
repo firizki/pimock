@@ -9,36 +9,42 @@ func TestNewResponses(t *testing.T)  {
     mapdcvr map[string][]string
     method  string
     path    string
+    header  map[string][]string
     urlq    map[string][]string
     result  int
   }
 
   cases := []unit{
-    unit{map[string][]string{"healthz": []string{}},"GET", "healthz", map[string][]string{"key": []string{"value"}}, 0},
-    unit{map[string][]string{"healthz": []string{}},"GET", "healthz/", map[string][]string{"key": []string{"value"}}, 0},
-    unit{map[string][]string{"hallo": []string{}},"GET", "healthz", map[string][]string{"key": []string{"value"}}, 1},
-    unit{map[string][]string{"healthz/(?!4)": []string{}},"GET", "healthz", map[string][]string{"key": []string{"value"}}, 2},
+    unit{map[string][]string{"healthz": []string{}},"GET", "healthz", map[string][]string{}, map[string][]string{"key": []string{"value"}}, 0},
+    unit{map[string][]string{"healthz": []string{}},"GET", "healthz", map[string][]string{"Pimock-Sleep": []string{"1"}}, map[string][]string{"key": []string{"value"}}, 0},
+    unit{map[string][]string{"healthz": []string{}},"GET", "healthz/", map[string][]string{}, map[string][]string{"key": []string{"value"}}, 0},
+    unit{map[string][]string{"hallo": []string{}},"GET", "healthz", map[string][]string{}, map[string][]string{"key": []string{"value"}}, 1},
+    unit{map[string][]string{"healthz/(?!1)": []string{}},"GET", "healthz", map[string][]string{}, map[string][]string{"key": []string{"value"}}, 2},
+    unit{map[string][]string{"healthz": []string{}},"GET", "healthz", map[string][]string{"Pimock-Sleep": []string{"Value","Key"}}, map[string][]string{"key": []string{"value"}}, 2},
+
   }
 
   for _, c := range cases {
     switch c.result {
     case 0:
-      res := NewResponse(c.method, c.path, c.urlq, c.mapdcvr)
+      res := NewResponse(c.method, c.path, c.header, c.urlq, c.mapdcvr)
       if res == nil {
         t.Errorf("The code did not give correct result")
       }
     case 1:
-      res := NewResponse(c.method, c.path, c.urlq, c.mapdcvr)
+      res := NewResponse(c.method, c.path, c.header, c.urlq, c.mapdcvr)
       if res != nil {
         t.Errorf("The code did not give correct result")
       }
     case 2:
-      defer func() {
+      t.Run("Panic Test", func(t *testing.T) {
+        defer func() {
           if r := recover(); r == nil {
-              t.Errorf("The code did not panic")
+            t.Errorf("The code did not panic")
           }
-      }()
-      NewResponse(c.method, c.path, c.urlq, c.mapdcvr)
+        }()
+        NewResponse(c.method, c.path, c.header, c.urlq, c.mapdcvr)
+      })
     }
   }
 

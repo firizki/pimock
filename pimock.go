@@ -14,7 +14,7 @@ func main() {
 }
 
 func MockServer(w http.ResponseWriter, r *http.Request) {
-  res := NewResponse(r.Method, r.URL.Path[1:], r.URL.Query(), mapDiscover.maps)
+  res := NewResponse(r.Method, r.URL.Path[1:], r.Header, r.URL.Query(), mapDiscover.maps)
 
   if res == nil {
     w.WriteHeader(404)
