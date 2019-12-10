@@ -4,6 +4,7 @@ import (
   "regexp"
   "strings"
   "strconv"
+  "time"
 )
 
 type Response struct {
@@ -13,7 +14,10 @@ type Response struct {
   resp      []string
 }
 
-func NewResponse(method, path string, urlq, mapdsc map[string][]string) *Response {
+func NewResponse(method, path string, urlq, mapdsc map[string][]string, sleepTime string) *Response {
+  var intSleepTime int
+  intSleepTime, _ = strconv.Atoi(sleepTime)
+  time.Sleep(time.Duration(intSleepTime) * time.Millisecond)
   if string(path[len(path)-1]) == "/" {
     path = path[:len(path)-1]
   }
