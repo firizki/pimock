@@ -13,7 +13,7 @@ type Response struct {
   resp      []string
 }
 
-func NewResponse(method, path string, urlq map[string][]string) *Response {
+func NewResponse(method, path string, urlq, mapdsc map[string][]string) *Response {
   if string(path[len(path)-1]) == "/" {
     path = path[:len(path)-1]
   }
@@ -26,7 +26,7 @@ func NewResponse(method, path string, urlq map[string][]string) *Response {
   }
 
   targetPath := "responses/"+method+"/"+path+"/response"
-  for i, v := range mapDiscover.maps {
+  for i, v := range mapdsc {
     result, err := regexp.MatchString(i, targetPath)
     if err != nil {
       panic(err)
