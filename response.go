@@ -62,7 +62,7 @@ func (r Response) getHeaderData() map[string]string {
       i = len(r.resp)
     } else {
       x := strings.Split(r.resp[i], ":")
-      results[x[0]] = x[1]
+      results[x[0]] = strings.TrimSpace(x[1])
     }
   }
   return results
