@@ -85,8 +85,8 @@ func TestHeaderData(t *testing.T) {
   }
 
   cases := []unit{
-    unit{[]string{"HTTP/1.1 200 OK", "Content-Type: text/plain; charset=utf-8", ""}, map[string]string{"Content-Type": " text/plain; charset=utf-8"}},
-    unit{[]string{"HTTP/1.1 200 OK", "Content-Type: application/json", ""}, map[string]string{"Content-Type": " application/json"}},
+    unit{[]string{"HTTP/1.1 200 OK", "Content-Type: text/plain; charset=utf-8", ""}, map[string]string{"Content-Type": "text/plain; charset=utf-8"}},
+    unit{[]string{"HTTP/1.1 200 OK", "Content-Type: application/json", ""}, map[string]string{"Content-Type": "application/json"}},
   }
 
   for _, c := range cases {
