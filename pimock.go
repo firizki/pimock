@@ -20,16 +20,20 @@ func MockServer(w http.ResponseWriter, r *http.Request) {
     w.WriteHeader(404)
     w.Write([]byte("Not Found"))
   } else {
-    headerStatus := res.getHeaderStatus()
-    headerData := res.getHeaderData()
-    body := res.getBody()
+    headerStatus := make(chan int)
+    headerData   := make(chan map[string]string)
+    body         := make(chan string)
 
-    for i, x := range headerData {
+    go res.getHeaderStatus(headerStatus)
+    go res.getHeaderData(headerData)
+    go res.getBody(body)
+
+    for i, x := range <-headerData {
       w.Header().Set(i, x)
     }
 
-    w.WriteHeader(headerStatus)
-    w.Write([]byte(body))
+    w.WriteHeader(<-headerStatus)
+    w.Write([]byte(<-body))
   }
 
 }

@@ -47,15 +47,15 @@ func NewResponse(method, path string, header, urlq, mapdsc map[string][]string) 
   return nil
 }
 
-func (r Response) getHeaderStatus() int {
+func (r Response) getHeaderStatus(ret chan int) {
   result, err := strconv.Atoi(strings.Split(r.resp[0], " ")[1])
   if err != nil {
     panic(err)
   }
-  return result
+  ret <- result
 }
 
-func (r Response) getHeaderData() map[string]string {
+func (r Response) getHeaderData(ret chan map[string]string) {
   results := map[string]string{}
   for i := 1; i < len(r.resp); i++ {
     if r.resp[i] == "" {
@@ -65,20 +65,21 @@ func (r Response) getHeaderData() map[string]string {
       results[x[0]] = strings.TrimSpace(x[1])
     }
   }
-  return results
+  ret <- results
 }
 
-func (r Response) getBody() string {
+func (r Response) getBody(ret chan string) {
+  result := ""
   for i := 0; i < len(r.resp); i++ {
     if r.resp[i] == "" {
-      result := strings.Join(r.resp[i+1:], "\n")
+      result = strings.Join(r.resp[i+1:], "\n")
       re := regexp.MustCompile(`({{)([^}]*)(}})`)
       rgx := re.FindAllString(result, -1)
       for _,v := range rgx {
         result = strings.ReplaceAll(result, v, r.variables[v])
       }
-      return result
+      break
     }
   }
-  return ""
+  ret <- result
 }

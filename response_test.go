@@ -61,10 +61,13 @@ func TestHeaderStatus(t *testing.T) {
     unit{[]string{"HTTP/1.1 OK"}, 0},
   }
 
+  ret := make(chan int)
+
   for _, c := range cases {
     res := Response{resp: c.test}
     if c.result != 0 {
-      if res.getHeaderStatus() != c.result {
+      go res.getHeaderStatus(ret)
+      if <-ret != c.result {
         t.Errorf("The code did not give correct result")
       }
     } else {
@@ -73,7 +76,8 @@ func TestHeaderStatus(t *testing.T) {
               t.Errorf("The code did not panic")
           }
       }()
-      res.getHeaderStatus()
+      res.getHeaderStatus(ret)
+      <-ret
     }
   }
 }
@@ -89,10 +93,12 @@ func TestHeaderData(t *testing.T) {
     unit{[]string{"HTTP/1.1 200 OK", "Content-Type: application/json", ""}, map[string]string{"Content-Type": "application/json"}},
   }
 
+  ret := make(chan map[string]string)
+
   for _, c := range cases {
     res := Response{resp: c.test}
-    headerData := res.getHeaderData()
-    for i, v := range headerData {
+    go res.getHeaderData(ret)
+    for i, v := range <-ret {
       if c.result[i] != v {
         t.Errorf("The code did not give correct result")
       }
@@ -114,11 +120,13 @@ func TestBody(t *testing.T) {
     unit{[]string{"OK"}, map[string]string{}, ""},
   }
 
+  ret := make(chan string)
+
   for _, c := range cases {
     res := Response{resp: c.test, variables: c.vars}
-    if res.getBody() != c.result {
+    go res.getBody(ret)
+    if <-ret != c.result {
       t.Errorf("The code did not give correct result")
     }
   }
-
 }
