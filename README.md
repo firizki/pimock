@@ -75,3 +75,19 @@ Simple Mock API using Golang
   }
   ```
 </details>
+<details>
+  <summary>Passing flags as options</summary>
+
+  When you use the executable file, you can pass flag as options.
+
+  Example:
+  ```console
+  ./pimock -port=3000
+  ```
+
+  To get usage documentation, you can execute this command below:
+
+  ```console
+  ./pimock -h
+  ``` 
+</details>
