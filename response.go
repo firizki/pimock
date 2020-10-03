@@ -1,10 +1,13 @@
 package main
 
 import (
-  "regexp"
-  "strings"
-  "strconv"
-  "time"
+	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
+
+	f "github.com/firizki/pimock/flagwrap"
 )
 
 type Response struct {
@@ -14,7 +17,7 @@ type Response struct {
   resp      []string
 }
 
-func NewResponse(method, path string, header, urlq, mapdsc map[string][]string) *Response {
+func NewResponse(method, path string, header, urlq, mapdsc map[string][]string, fw f.FlagWrap) *Response {
   if len(header["Pimock-Sleep"]) > 0 {
     pimock_sleep, err := strconv.Atoi(header["Pimock-Sleep"][0])
     if err != nil {
@@ -34,7 +37,7 @@ func NewResponse(method, path string, header, urlq, mapdsc map[string][]string) 
     tempPaths["{{request.url."+i+"}}"] = v[0]
   }
 
-  targetPath := "responses/"+method+"/"+path+"/response"
+  targetPath := fmt.Sprintf("%s/%s/%s/%s", *fw.GetRootDirectory(), method, path, *fw.GetResponseFile())
   for i, v := range mapdsc {
     result, err := regexp.MatchString(i, targetPath)
     if err != nil {
