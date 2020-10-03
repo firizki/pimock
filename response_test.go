@@ -1,7 +1,9 @@
 package main
 
 import (
-  "testing"
+	"testing"
+
+	fw "github.com/firizki/pimock/flagwrap"
 )
 
 func TestNewResponses(t *testing.T)  {
@@ -21,18 +23,17 @@ func TestNewResponses(t *testing.T)  {
     unit{map[string][]string{"hallo": []string{}},"GET", "healthz", map[string][]string{}, map[string][]string{"key": []string{"value"}}, 1},
     unit{map[string][]string{"healthz/(?!1)": []string{}},"GET", "healthz", map[string][]string{}, map[string][]string{"key": []string{"value"}}, 2},
     unit{map[string][]string{"healthz": []string{}},"GET", "healthz", map[string][]string{"Pimock-Sleep": []string{"Value","Key"}}, map[string][]string{"key": []string{"value"}}, 2},
-
   }
 
   for _, c := range cases {
     switch c.result {
     case 0:
-      res := NewResponse(c.method, c.path, c.header, c.urlq, c.mapdcvr)
+      res := NewResponse(c.method, c.path, c.header, c.urlq, c.mapdcvr, fw.GetSampleBaseFlagWrap())
       if res == nil {
         t.Errorf("The code did not give correct result")
       }
     case 1:
-      res := NewResponse(c.method, c.path, c.header, c.urlq, c.mapdcvr)
+      res := NewResponse(c.method, c.path, c.header, c.urlq, c.mapdcvr, fw.GetSampleBaseFlagWrap())
       if res != nil {
         t.Errorf("The code did not give correct result")
       }
@@ -43,7 +44,7 @@ func TestNewResponses(t *testing.T)  {
             t.Errorf("The code did not panic")
           }
         }()
-        NewResponse(c.method, c.path, c.header, c.urlq, c.mapdcvr)
+        NewResponse(c.method, c.path, c.header, c.urlq, c.mapdcvr, fw.GetSampleBaseFlagWrap())
       })
     }
   }
